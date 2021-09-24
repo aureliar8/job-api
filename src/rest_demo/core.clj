@@ -6,8 +6,10 @@
             [clojure.string :as str])
   (:gen-class))
 
+;; Data manipulation. Should likely be in it's own
+;; file/package/module/namespace 
 
-; map of jobs 
+;; In memory job storage via a map where the key is the job uuid 
 (def jobs (atom {}))
 
 (defn get-all-jobs [] @jobs)
@@ -22,33 +24,43 @@
             :description description})))
 
 (defn remove-job [id]
-  swap! jobs dissoc id)
+  (swap! jobs dissoc id))
 
-(println (addjob  "exoscale" "engineer" "do things"))
+(addjob  "exoscale" "engineer" "do things")
 
+
+;;-------------------------------------------------------------------
+;; Api handlers
+
+;; Returns a json map of all jobs 
 (defn list-jobs-handler [req]
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    (str (json/write-str (get-all-jobs)))})
 
+;; Add a job with the given company, title and description and returns
+;; the new map. If one of those field isn't set, it will be
+;; inserted with value null. Maybe validate the input and return an
+;; error
 (defn add-job-handler [req]
   {:status 200
    :headers {"Content-Type" "application/json"}
    :body  (str (json/write-str (addjob
-                                (get-in req [:body :company])
-                                (get-in req [:body :title])
-                                (get-in req [:body :description]))))})
+                                (str (get-in req [:body :company]))
+                                (str (get-in req [:body :title]))
+                                (str (get-in req [:body :description])))))})
+
+;; Remove a job with the given id and return the new map. No error is
+;; return if no job with such id exists. 
 (defn remove-job-handler [req]
   {:status 200
    :headers {"Content-Type" "application/json"}
-   :body (->
-          (println (str (get-in req [:param :id])))
-          (str get-in req [:param :id]))})
+   :body  (str (json/write-str (remove-job (get-in req [:params :id]))))})
 
 (defroutes app-routes
   (GET "/jobs" [] list-jobs-handler)
   (POST "/jobs" [] add-job-handler)
-  (DELETE "/jobs/:id" [] remove-job-handler))
+  (DELETE "/jobs/:id" [] remove-job-handler)) ;;Todo: ensure that :id has a valid format 
 
 (defn -main
   "Main entry point "

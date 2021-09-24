@@ -42,13 +42,13 @@
   {:status 200
    :headers {"Content-Type" "application/json"}
    :body (->
-          (println))
-   })
+          (println (str (get-in req [:param :id])))
+          (str get-in req [:param :id]))})
 
 (defroutes app-routes
   (GET "/jobs" [] list-jobs-handler)
   (POST "/jobs" [] add-job-handler)
-  (DELETE "/jobs/:id" [id] remove-job-handler))
+  (DELETE "/jobs/:id" [] remove-job-handler))
 
 (defn -main
   "Main entry point "

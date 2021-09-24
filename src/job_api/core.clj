@@ -51,7 +51,7 @@
                                 (str (get-in req [:body :description])))))})
 
 ;; Remove a job with the given id and return the new map. No error is
-;; return if no job with such id exists. 
+;; returned if no job with such id exists. 
 (defn remove-job-handler [req]
   {:status 200
    :headers {"Content-Type" "application/json"}
@@ -60,7 +60,7 @@
 (defroutes app-routes
   (GET "/jobs" [] list-jobs-handler)
   (POST "/jobs" [] add-job-handler)
-  (DELETE "/jobs/:id" [] remove-job-handler)) ;;Todo: ensure that :id has a valid format 
+  (DELETE "/jobs/:id" [] remove-job-handler)) ;Todo: ensure that :id has a valid format 
 
 (defn -main
   "Main entry point "

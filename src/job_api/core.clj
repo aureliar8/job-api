@@ -1,4 +1,4 @@
-(ns rest-demo.core
+(ns job-api.core
   (:require [org.httpkit.server :as server]
             [compojure.core :refer :all]
             [ring.middleware.json :refer :all]
